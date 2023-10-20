@@ -10,14 +10,15 @@ local UserInputService = game:GetService("UserInputService")
 local HoldingM2 = false
 local Active = false
 
+
 local FOVCircle = Drawing.new("Circle")
 FOVCircle.Position = Vector2.new(MyView.ViewportSize.X / 2, MyView.ViewportSize.Y / 2)
-FOVCircle.Radius = Settings.CircleRadius
-FOVCircle.Color = Settings.CircleColor
+FOVCircle.Radius = _G.CircleRadius
+FOVCircle.Color = _G.CircleColor
 FOVCircle.Thickness = 2
 FOVCircle.Transparency = 1
 FOVCircle.NumSides = 64
-FOVCircle.Visible = Settings.FOVVisible
+FOVCircle.Visible = true
 
 local function CursorLock()
     UserInputService.MouseBehavior = Enum.MouseBehavior.LockCenter
@@ -34,14 +35,14 @@ function FindNearestPlayer()
     local closestDistance = math.huge
 
     for _, player in pairs(Players:GetPlayers()) do
-        if player ~= LocalPlayer and player.Character and player.Character:FindFirstChild(Settings.AimPart) then
-            local targetPart = player.Character[Settings.AimPart]
+        if player ~= LocalPlayer and player.Character and player.Character:FindFirstChild(_G.AimPart) then
+            local targetPart = player.Character[_G.AimPart]
             local screenPos, onScreen = MyView:WorldToScreenPoint(targetPart.Position)
 
             if onScreen then
                 local distance = (Vector2.new(screenPos.X, screenPos.Y) - Vector2.new(MyView.ViewportSize.X / 2, MyView.ViewportSize.Y / 2)).Magnitude
 
-                if distance < Settings.CircleRadius and distance < closestDistance then
+                if distance < _G.CircleRadius and distance < closestDistance then
                     closestDistance = distance
                     closestPlayer = targetPart
                 end
@@ -61,7 +62,7 @@ UserInputService.InputBegan:Connect(function(Input)
             local target = FindNearestPlayer()
 
             while HoldingM2 and target do
-                local predictedPosition = target.Position + target.Velocity * Settings.PredictionMultiplier
+                local predictedPosition = target.Position + target.Velocity * _G.PredictionMultiplier
                 MyView.CFrame = CFrame.lookAt(MyView.CFrame.Position, predictedPosition)
                 FOVCircle.Position = Vector2.new(MyView.ViewportSize.X / 2, MyView.ViewportSize.Y / 2)
 
@@ -76,3 +77,4 @@ UserInputService.InputEnded:Connect(function(Input)
         UnLockCursor()
     end
 end)
+
